@@ -1,0 +1,6 @@
+username = "admin"
+password = "hunter2"
+qbthost = "http://torrent_box.example.com:8080"
+hec_token = "secretttoken"
+hec_host = "hec.example.com"
+source_host = "yourcomputer"
