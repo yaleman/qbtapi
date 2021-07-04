@@ -24,7 +24,7 @@ class API(object):
     def __init__(self):
         """ for dealing with things """
         self.server = os.getenv('QB_SERVER_HOST')
-        self.baseurl = f"http://{{self.server}}"
+        self.baseurl = f'http://{self.server}'
         self.username = os.getenv('QB_USERNAME')
         self.password = os.getenv('QB_PASSWORD')
         self.cookies = self.login()
