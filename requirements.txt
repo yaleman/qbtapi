@@ -1,0 +1,1 @@
+git+git://github.com/georgestarcher/Splunk-Class-httpevent.git
