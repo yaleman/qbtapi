@@ -95,7 +95,7 @@ for torrent in api.get_torrents():
         "source": "qbittorrent",
         "event": torrent,
     }
-    print(torrent.get("name", file=sys.stdout))
+    print(torrent.get("name"), file=sys.stdout)
     # send it
     hec.batchEvent(payload)
     queue_counter += 1
