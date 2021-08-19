@@ -16,7 +16,7 @@ import requests.exceptions
 
 
 # remove this for testing
-os.environ["LOGURU_LEVEL"] = "WARNING"
+os.environ["LOGURU_LEVEL"] = "DEBUG"
 try:
     from loguru import logger
 except ImportError as error_message:
