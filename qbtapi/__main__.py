@@ -14,13 +14,8 @@ from socket import gethostname
 import requests
 import requests.exceptions
 
-
 # remove this for testing
 os.environ["LOGURU_LEVEL"] = "DEBUG"
-try:
-    from loguru import logger
-except ImportError as error_message:
-    sys.exit(f"Failed to import loguru: {error_message}")
 
 # python3 -m pip install git+git://github.com/georgestarcher/Splunk-Class-httpevent.git
 try:
@@ -44,10 +39,10 @@ class API():
             response = requests.post(url, data=data, cookies=cookies)
             response.raise_for_status()
         except requests.exceptions.ConnectionError as error:
-            print(f"Connection error to {self.baseurl}, bailing: {error}")
+            print(f"Connection error to {self.baseurl}, bailing: {error}", file=sys.stderr)
             sys.exit(1)
         except Exception as error: # pylint: disable=broad-except
-            print(f"Error connecting to {url}, bailing: {error}")
+            print(f"Error connecting to {url}, bailing: {error}", file=sys.stderr)
             sys.exit(1)
         return response
 
@@ -60,7 +55,7 @@ class API():
                 "password": self.password,
             },
         )
-        logger.debug("Login: {}", response.text)
+        print("Login: {}", response.text, file=sys.stdout)
         cookies = response.cookies
         return cookies
 
@@ -69,7 +64,7 @@ class API():
         response = self.do_post(
             f"{self.baseurl}/api/v2/app/webapiVersion", cookies=self.cookies
         )
-        logger.debug("API Version: {}", response.text)
+        print("API Version: {}", response.text, file=sys.stdout)
         return response.text
 
     def get_torrents(self):
@@ -100,12 +95,12 @@ for torrent in api.get_torrents():
         "source": "qbittorrent",
         "event": torrent,
     }
-    logger.debug(torrent.get("name"))
+    print(torrent.get("name", file=sys.stdout))
     # send it
     hec.batchEvent(payload)
     queue_counter += 1
     if queue_counter > 20:
         hec.flushBatch()
         queue_counter = 0
-logger.debug("Flushing queue...")
+print("Flushing queue...", file=sys.stdout)
 hec.flushBatch()
