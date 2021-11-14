@@ -14,9 +14,6 @@ from socket import gethostname
 import requests
 import requests.exceptions
 
-# remove this for testing
-os.environ["LOGURU_LEVEL"] = "DEBUG"
-
 # python3 -m pip install git+git://github.com/georgestarcher/Splunk-Class-httpevent.git
 try:
     from splunk_http_event_collector import http_event_collector
@@ -75,6 +72,9 @@ class API():
         return response.json()
 
 
+if not os.getenv("PARENT_HOST"):
+    sys.exit("PARENT_HOST environment variable is not set, bailing.")
+
 api = API()
 
 hec = http_event_collector(
@@ -88,15 +88,18 @@ hec.log.setLevel(logging.DEBUG)
 
 # pylint: disable=invalid-name
 queue_counter = 0
+hostname = gethostname()
 for torrent in api.get_torrents():
+
+    # add this so we can troubleshoot later
+    torrent["CONTAINER_ID"] = hostname
+
     payload = {
         "sourcetype": os.getenv('HECSOURCETYPE', "torrent:info"),
-        "host": gethostname(), # might as well just say what we think we are
+        "host" : os.getenv("PARENT_HOST"),
         "source": "qbittorrent",
         "event": torrent,
     }
-    print(torrent.get("name"), file=sys.stdout)
-    # send it
     hec.batchEvent(payload)
     queue_counter += 1
     if queue_counter > 20:
