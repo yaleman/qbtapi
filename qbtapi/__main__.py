@@ -12,7 +12,7 @@ import sys
 from socket import gethostname
 
 try:
-    from splunk_http_event_collector import http_event_collector
+    from splunk_http_event_collector import http_event_collector #type:ignore
 except ImportError as error_message:
     sys.exit(f"Failed to import splunk_http_event_collector: {error_message}")
 
