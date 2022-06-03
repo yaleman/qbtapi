@@ -14,7 +14,7 @@ requests = "^2.27.1"
 url = "https://github.com/georgestarcher/Splunk-Class-httpevent/archive/refs/heads/master.tar.gz"
 
 [tool.poetry.dev-dependencies]
-pylint = "^2.13.9"
+pylint = "^2.14.0"
 pytest = "^7.1.2"
 black = "^22.3.0"
 mypy = "^0.960"
