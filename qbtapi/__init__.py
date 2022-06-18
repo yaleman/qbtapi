@@ -1,20 +1,40 @@
 """ Qbittorrent API dumper """
 
-
-import os
 import sys
 
+from pydantic import BaseSettings, Field
 import requests
 import requests.exceptions
 
+
+class QBTAPIConfig(BaseSettings):
+    """configuration"""
+    hec_hostname: str = Field(..., env="HECHOST", alias="HECHOST")
+    hec_token: str = Field(..., env="HECTOKEN")
+    hec_port: int = Field(8088, gt=0, lt=65535, env="HECPORT")
+    hec_tls: bool = True
+
+    hec_index: str = Field(default="torrent", env="HECINDEX")
+    hec_source: str = "qbittorrent"
+    hec_sourcetype: str =  Field(default="torrent:info", env='HECSOURCETYPE')
+
+    qb_hostname: str = Field(..., env="QB_SERVER_HOST")
+    qb_username: str = Field(..., env="QB_USERNAME")
+    qb_password: str = Field(..., env="QB_PASSWORD")
+
+    class Config:
+        """config settings for the QBTAPIConfig Class"""
+        env_file = '.env'
+        env_file_encoding = 'utf-8'
+
 class API():
     """ handles interactions with the API """
-    def __init__(self):
+    def __init__(self, config: QBTAPIConfig):
         """ for dealing with things """
-        self.server = os.getenv('QB_SERVER_HOST')
+        self.server = config.qb_hostname
         self.baseurl = f'http://{self.server}'
-        self.username = os.getenv('QB_USERNAME')
-        self.password = os.getenv('QB_PASSWORD')
+        self.username = config.qb_username
+        self.password = config.qb_password
         self.cookies = self.login()
 
     def do_post(self, url, data=None, cookies=None):

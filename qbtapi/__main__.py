@@ -6,31 +6,34 @@ Pulls torrent information from the qBittorrent API and pushes it to Splunk HEC
 https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-(qBittorrent-4.1)#torrent-management
 """
 
-import os
 import logging
+import os
 import sys
 from socket import gethostname
 
-try:
-    from splunk_http_event_collector import http_event_collector #type:ignore
-except ImportError as error_message:
-    sys.exit(f"Failed to import splunk_http_event_collector: {error_message}")
+from splunk_http_event_collector import http_event_collector #type:ignore
 
-from . import API
+from . import API, QBTAPIConfig
+
+CONFIG_FILENAMES = [
+    "qbtapi.json",
+    "~/.config/qbtapi.json",
+    "/etc/qbtapi.json",
+    os.getenv("QBTAPI_CONFIG_FILE", None)
+]
 
 if __name__ == '__main__':
-    if not os.getenv("PARENT_HOST"):
-        sys.exit("PARENT_HOST environment variable is not set, bailing.")
 
-    api = API()
+    config = QBTAPIConfig()
+    api = API(config=config)
 
     hec = http_event_collector(
-        token=os.getenv('HECTOKEN'),
-        http_event_server=os.getenv('HECHOST'),
-        http_event_port=os.getenv('HECPORT', "443"),
-        http_event_server_ssl=True,
+        token=config.hec_token,
+        http_event_server=config.hec_hostname,
+        http_event_port=config.hec_port,
+        http_event_server_ssl=config.hec_tls,
     )
-    hec.index = os.getenv("HECINDEX", "torrent")
+    hec.index = config.hec_index
     hec.log.setLevel(logging.DEBUG)
 
     # pylint: disable=invalid-name
@@ -42,9 +45,9 @@ if __name__ == '__main__':
         torrent["CONTAINER_ID"] = hostname
 
         payload = {
-            "sourcetype": os.getenv('HECSOURCETYPE', "torrent:info"),
-            "host" : os.getenv("PARENT_HOST"),
-            "source": "qbittorrent",
+            "sourcetype": config.hec_sourcetype,
+            "host" : hostname,
+            "source": config.hec_source,
             "event": torrent,
         }
         hec.batchEvent(payload)
