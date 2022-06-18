@@ -22,6 +22,7 @@ class QBTAPIConfig(BaseSettings):
     qb_username: str = Field(..., env="QB_USERNAME")
     qb_password: str = Field(..., env="QB_PASSWORD")
 
+    #pylint: disable=too-few-public-methods
     class Config:
         """config settings for the QBTAPIConfig Class"""
         env_file = '.env'
