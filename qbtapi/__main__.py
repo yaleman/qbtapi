@@ -9,7 +9,6 @@ https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-(qBittorrent-4.1)#torr
 import logging
 import os
 import sys
-from socket import gethostname
 
 from splunk_http_event_collector import http_event_collector #type:ignore
 
@@ -38,15 +37,12 @@ if __name__ == '__main__':
 
     # pylint: disable=invalid-name
     queue_counter = 0
-    hostname = gethostname()
     for torrent in api.get_torrents():
 
         # add this so we can troubleshoot later
-        torrent["CONTAINER_ID"] = hostname
-
         payload = {
             "sourcetype": config.hec_sourcetype,
-            "host" : hostname,
+            "host" : config.hec_host_field,
             "source": config.hec_source,
             "event": torrent,
         }

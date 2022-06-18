@@ -1,5 +1,7 @@
 """ Qbittorrent API dumper """
 
+from socket import gethostname
+
 import sys
 
 from pydantic import BaseSettings, Field
@@ -17,6 +19,8 @@ class QBTAPIConfig(BaseSettings):
     hec_index: str = Field(default="torrent", env="HECINDEX")
     hec_source: str = "qbittorrent"
     hec_sourcetype: str =  Field(default="torrent:info", env='HECSOURCETYPE')
+
+    hec_host_field = str = Field(default=gethostname(), env="HECHOSTFIELD")
 
     qb_hostname: str = Field(..., env="QB_SERVER_HOST")
     qb_username: str = Field(..., env="QB_USERNAME")
