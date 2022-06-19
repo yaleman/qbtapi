@@ -10,7 +10,7 @@ import logging
 import os
 import sys
 
-from splunk_http_event_collector import http_event_collector #type:ignore
+from splunk_http_event_collector import http_event_collector  # type:ignore
 
 from . import API, QBTAPIConfig
 
@@ -18,10 +18,10 @@ CONFIG_FILENAMES = [
     "qbtapi.json",
     "~/.config/qbtapi.json",
     "/etc/qbtapi.json",
-    os.getenv("QBTAPI_CONFIG_FILE", None)
+    os.getenv("QBTAPI_CONFIG_FILE", None),
 ]
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     config = QBTAPIConfig()
     api = API(config=config)
@@ -42,7 +42,7 @@ if __name__ == '__main__':
         # add this so we can troubleshoot later
         payload = {
             "sourcetype": config.hec_sourcetype,
-            "host" : config.hec_host_field,
+            "host": config.hec_host_field,
             "source": config.hec_source,
             "event": torrent,
         }
