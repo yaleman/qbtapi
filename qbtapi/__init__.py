@@ -56,7 +56,7 @@ class API:
     ) -> requests.Response:
         """general POST request thingie, kills the program if it fails."""
         try:
-            response = requests.post(url, data=data, cookies=cookies)
+            response = requests.post(url, data=data, cookies=cookies, timeout=30)
             response.raise_for_status()
         except requests.exceptions.ConnectionError as error:
             print(

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qbtapi"
-version = "0.0.2"
+version = "0.0.3"
 description = "Pulls things from the QBittorrent API"
 authors = [
     "James Hodgkinson <james@terminaloutcomes.com>",
