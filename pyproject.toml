@@ -9,7 +9,7 @@ authors = [
 [tool.poetry.dependencies]
 python = "^3.10"
 requests = "^2.28.1"
-pydantic = {extras = ["dotenv"], version = "^1.9.2"}
+pydantic = {extras = ["dotenv"], version = "^1.10.1"}
 
 [tool.poetry.dependencies.splunk-hec]
 url = "https://github.com/georgestarcher/Splunk-Class-httpevent/archive/refs/heads/master.tar.gz"
