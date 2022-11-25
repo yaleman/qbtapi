@@ -15,7 +15,7 @@ pydantic = {extras = ["dotenv"], version = "^1.10.2"}
 url = "https://github.com/georgestarcher/Splunk-Class-httpevent/archive/refs/heads/master.tar.gz"
 
 [tool.poetry.dev-dependencies]
-pylint = "^2.15.5"
+pylint = "^2.15.6"
 pytest = "^7.2.0"
 black = "^22.10.0"
 mypy = "^0.991"
