@@ -17,7 +17,8 @@ extras = [
 version = "^1.10.2"
 
 [tool.poetry.dependencies.splunk-hec]
-url = "https://github.com/georgestarcher/Splunk-Class-httpevent/archive/refs/heads/master.tar.gz"
+# temporary due to urllib3 dependency
+url = "https://github.com/yaleman/Splunk-Class-httpevent/archive/refs/heads/yaleman/issue27.tar.gz"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.15.5"
