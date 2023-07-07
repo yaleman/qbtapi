@@ -14,7 +14,7 @@ requests = "^2.28.1"
 extras = [
     "dotenv",
 ]
-version = "^1.10.2"
+version = "^2.0.2"
 
 [tool.poetry.dependencies.splunk-hec]
 url = "https://github.com/georgestarcher/Splunk-Class-httpevent/archive/refs/heads/master.tar.gz"
