@@ -5,11 +5,11 @@ from socket import gethostname
 import sys
 from typing import Any, Dict, Optional
 
-from pydantic import ConfigDict, Field
+from pydantic import Field
 import requests
 from requests.cookies import RequestsCookieJar
 import requests.exceptions
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class QBTAPIConfig(BaseSettings):
@@ -22,14 +22,16 @@ class QBTAPIConfig(BaseSettings):
 
     hec_index: str = Field(default="torrent", validation_alias="HECINDEX")
     hec_source: str = "qbittorrent"
-    hec_sourcetype: str = Field(default="torrent:info", validation_alias="HECSOURCETYPE")
+    hec_sourcetype: str = Field(
+        default="torrent:info", validation_alias="HECSOURCETYPE"
+    )
 
     hec_host_field: str = Field(default=gethostname(), validation_alias="HECHOSTFIELD")
 
     qb_hostname: str = Field(..., validation_alias="QB_SERVER_HOST")
     qb_username: str = Field(..., validation_alias="QB_USERNAME")
     qb_password: str = Field(..., validation_alias="QB_PASSWORD")
-    model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
 class API:

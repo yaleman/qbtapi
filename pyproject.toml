@@ -29,6 +29,9 @@ types-requests = "^2.28.11"
 pylint-pydantic = "^0.2.0"
 pylint-pytest = "^1.1.2"
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.0.277"
+
 [tool.pylint.MASTER]
 max-line-length = 150
 disable = "W0511,raise-missing-from"
