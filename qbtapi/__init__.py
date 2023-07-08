@@ -5,36 +5,31 @@ from socket import gethostname
 import sys
 from typing import Any, Dict, Optional
 
-from pydantic import BaseSettings, Field
+from pydantic import ConfigDict, Field
 import requests
 from requests.cookies import RequestsCookieJar
 import requests.exceptions
+from pydantic_settings import BaseSettings
 
 
 class QBTAPIConfig(BaseSettings):
     """configuration"""
 
-    hec_hostname: str = Field(..., env="HECHOST", alias="HECHOST")
-    hec_token: str = Field(..., env="HECTOKEN")
-    hec_port: int = Field(8088, gt=0, lt=65535, env="HECPORT")
+    hec_hostname: str = Field(..., validation_alias="HECHOST", alias="HECHOST")
+    hec_token: str = Field(..., validation_alias="HECTOKEN")
+    hec_port: int = Field(8088, gt=0, lt=65535, validation_alias="HECPORT")
     hec_tls: bool = True
 
-    hec_index: str = Field(default="torrent", env="HECINDEX")
+    hec_index: str = Field(default="torrent", validation_alias="HECINDEX")
     hec_source: str = "qbittorrent"
-    hec_sourcetype: str = Field(default="torrent:info", env="HECSOURCETYPE")
+    hec_sourcetype: str = Field(default="torrent:info", validation_alias="HECSOURCETYPE")
 
-    hec_host_field: str = Field(default=gethostname(), env="HECHOSTFIELD")
+    hec_host_field: str = Field(default=gethostname(), validation_alias="HECHOSTFIELD")
 
-    qb_hostname: str = Field(..., env="QB_SERVER_HOST")
-    qb_username: str = Field(..., env="QB_USERNAME")
-    qb_password: str = Field(..., env="QB_PASSWORD")
-
-    # pylint: disable=too-few-public-methods
-    class Config:
-        """config settings for the QBTAPIConfig Class"""
-
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    qb_hostname: str = Field(..., validation_alias="QB_SERVER_HOST")
+    qb_username: str = Field(..., validation_alias="QB_USERNAME")
+    qb_password: str = Field(..., validation_alias="QB_PASSWORD")
+    model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
 class API:

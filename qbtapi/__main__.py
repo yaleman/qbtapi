@@ -12,7 +12,7 @@ import sys
 
 from splunk_http_event_collector import http_event_collector  # type:ignore
 
-from . import API, QBTAPIConfig
+from qbtapi import API, QBTAPIConfig
 
 CONFIG_FILENAMES = [
     "qbtapi.json",
