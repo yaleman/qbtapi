@@ -21,7 +21,7 @@ version = "^2.0.2"
 url = "https://github.com/georgestarcher/Splunk-Class-httpevent/archive/refs/heads/master.tar.gz"
 
 [tool.poetry.dev-dependencies]
-pylint = "^2.15.5"
+pylint = "^3.0.1"
 pytest = "^7.2.0"
 black = "^23.1.0"
 mypy = "^1.0"
