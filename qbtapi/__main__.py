@@ -21,8 +21,8 @@ CONFIG_FILENAMES = [
     os.getenv("QBTAPI_CONFIG_FILE", None),
 ]
 
-if __name__ == "__main__":
 
+def main():
     config = QBTAPIConfig()
     api = API(config=config)
 
@@ -53,3 +53,7 @@ if __name__ == "__main__":
             queue_counter = 0
     print("Flushing queue...", file=sys.stdout)
     hec.flushBatch()
+
+
+if __name__ == "__main__":
+    main()

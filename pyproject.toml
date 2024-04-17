@@ -1,10 +1,8 @@
 [tool.poetry]
 name = "qbtapi"
-version = "0.0.3"
+version = "0.0.4"
 description = "Pulls things from the QBittorrent API"
-authors = [
-    "James Hodgkinson <james@terminaloutcomes.com>",
-]
+authors = ["James Hodgkinson <james@terminaloutcomes.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -12,26 +10,23 @@ requests = "^2.28.1"
 pydantic-settings = "^2.0.1"
 
 [tool.poetry.dependencies.pydantic]
-extras = [
-    "dotenv",
-]
+extras = ["dotenv"]
 version = "^2.0.2"
 
 [tool.poetry.dependencies.splunk-hec]
-url = "https://github.com/georgestarcher/Splunk-Class-httpevent/archive/refs/heads/master.tar.gz"
-
-[tool.poetry.dev-dependencies]
-pylint = "^3.0.1"
-pytest = "^8.0.0"
-black = "^24.1.0"
-mypy = "^1.0"
-types-requests = "^2.28.11"
-pylint-pydantic = "^0.3.0"
-pylint-pytest = "^1.1.2"
+url = "https://github.com/yaleman/Splunk-Class-httpevent/archive/refs/heads/master.tar.gz"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.3.0"
+mypy = "^1.0"
+pylint = "^3.0.1"
+pylint-pydantic = "^0.3.0"
+pylint-pytest = "^1.1.2"
 pytest = "^8.0.0"
+ruff = "^0.3.0"
+types-requests = "^2.28.11"
+
+[tool.poetry.scripts]
+qbtapi = "qbtapi.__main__:main"
 
 [tool.pylint.MASTER]
 max-line-length = 150
@@ -40,18 +35,14 @@ extension-pkg-whitelist = "pydantic"
 load-plugins = "pylint_pydantic,pylint_pytest"
 
 [build-system]
-requires = [
-    "poetry-core>=1.0.0",
-]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "qbtapi"
 description = "Pulls things from the QBittorrent API"
 version = "0.0.3"
-authors = [
-    { name = "James Hodgkinson", email = "james@terminaloutcomes.com" },
-]
+authors = [{ name = "James Hodgkinson", email = "james@terminaloutcomes.com" }]
 
 [tool.mypy]
 plugins = "pydantic.mypy"
