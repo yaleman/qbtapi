@@ -22,14 +22,14 @@ CONFIG_FILENAMES = [
 ]
 
 
-def main():
-    config = QBTAPIConfig()
+def main() -> None:
+    config = QBTAPIConfig.model_validate({})
     api = API(config=config)
 
     hec = http_event_collector(
         token=config.hec_token,
         http_event_server=config.hec_hostname,
-        http_event_port=config.hec_port,
+        http_event_port=str(config.hec_port),
         http_event_server_ssl=config.hec_tls,
     )
     hec.index = config.hec_index
@@ -38,7 +38,6 @@ def main():
     # pylint: disable=invalid-name
     queue_counter = 0
     for torrent in api.get_torrents():
-
         # add this so we can troubleshoot later
         payload = {
             "sourcetype": config.hec_sourcetype,

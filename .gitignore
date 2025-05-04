@@ -4,4 +4,5 @@ __pycache__/*
 .vscode
 .DS_Store
 .env
-poetry.lock
+
+**/.claude/settings.local.json
