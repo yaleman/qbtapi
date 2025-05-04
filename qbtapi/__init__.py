@@ -83,7 +83,7 @@ class API:
         response = self.do_post(
             f"{self.baseurl}/api/v2/app/webapiVersion", cookies=self.cookies
         )
-        print("API Version: {}", response.text, file=sys.stdout)
+        print(f"API Version: {response.text}", file=sys.stdout)
         return response.text
 
     def get_torrents(self) -> Dict[str, Any]:
