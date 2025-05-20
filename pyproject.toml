@@ -9,6 +9,7 @@ dependencies = [
     "pydantic-settings>=2.0.1",
     "pydantic>=2.0.2",
     "splunk-hec @ https://github.com/yaleman/Splunk-Class-httpevent/archive/refs/heads/master.tar.gz",
+    "click>=8.2.0",
 ]
 
 [build-system]

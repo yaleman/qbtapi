@@ -8,9 +8,9 @@ https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-(qBittorrent-4.1)#torr
 
 import logging
 import os
-import sys
 
-from splunk_http_event_collector import http_event_collector  # type:ignore
+import click
+from splunk_http_event_collector import http_event_collector  # type: ignore[import-untyped]
 
 from qbtapi import API, QBTAPIConfig
 
@@ -22,7 +22,15 @@ CONFIG_FILENAMES = [
 ]
 
 
-def main() -> None:
+@click.command()
+@click.option("--debug", is_flag=True, help="Enable debug logging")
+@click.option("--dry-run", is_flag=True, help="Do not send data to Splunk")
+def main(debug: bool, dry_run: bool) -> None:
+    if debug:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
     config = QBTAPIConfig.model_validate({})
     api = API(config=config)
 
@@ -45,12 +53,14 @@ def main() -> None:
             "source": config.hec_source,
             "event": torrent,
         }
-        hec.batchEvent(payload)
+        if not dry_run:
+            hec.batchEvent(payload)
         queue_counter += 1
         if queue_counter > 20:
-            hec.flushBatch()
+            if not dry_run:
+                hec.flushBatch()
             queue_counter = 0
-    print("Flushing queue...", file=sys.stdout)
+    logger.info("Flushing queue...")
     hec.flushBatch()
 
 

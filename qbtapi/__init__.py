@@ -1,11 +1,12 @@
-""" Qbittorrent API dumper """
+"""Qbittorrent API dumper"""
 
+import logging
 from socket import gethostname
 
 import sys
 from typing import Any, Dict, Optional
 
-from pydantic import Field
+from pydantic import Field, SecretStr
 import requests
 from requests.cookies import RequestsCookieJar
 import requests.exceptions
@@ -28,9 +29,11 @@ class QBTAPIConfig(BaseSettings):
 
     hec_host_field: str = Field(default=gethostname(), validation_alias="HECHOSTFIELD")
 
-    qb_hostname: str = Field(..., validation_alias="QB_SERVER_HOST")
+    qb_hostname: str = Field("localhost", validation_alias="QB_SERVER_HOST")
     qb_username: str = Field(..., validation_alias="QB_USERNAME")
-    qb_password: str = Field(..., validation_alias="QB_PASSWORD")
+    qb_password: SecretStr = Field(..., validation_alias="QB_PASSWORD")
+    qb_port: int = Field(8080, gt=0, lt=65535, validation_alias="QB_PORT")
+    qb_use_tls: bool = Field(default=False, validation_alias="QB_USE_TLS")
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
@@ -39,11 +42,16 @@ class API:
 
     def __init__(self, config: QBTAPIConfig):
         """for dealing with things"""
-        self.server = config.qb_hostname
-        self.baseurl = f"http://{self.server}"
-        self.username = config.qb_username
-        self.password = config.qb_password
+        self.config = config
+
+        self.session = requests.Session()
         self.cookies = self.login()
+
+    @property
+    def baseurl(self) -> str:
+        """returns the base URL"""
+        scheme = "https" if self.config.qb_use_tls else "http"
+        return f"{scheme}://{self.config.qb_hostname}:{self.config.qb_port}"
 
     def do_post(
         self,
@@ -53,15 +61,13 @@ class API:
     ) -> requests.Response:
         """general POST request thingie, kills the program if it fails."""
         try:
-            response = requests.post(url, data=data, cookies=cookies, timeout=30)
+            response = self.session.post(url, data=data, cookies=cookies, timeout=30)
             response.raise_for_status()
         except requests.exceptions.ConnectionError as error:
-            print(
-                f"Connection error to {self.baseurl}, bailing: {error}", file=sys.stderr
-            )
+            logging.error("Connection error to %s, bailing: %s", url, error)
             sys.exit(1)
-        except Exception as error:  # pylint: disable=broad-except
-            print(f"Error connecting to {url}, bailing: {error}", file=sys.stderr)
+        except Exception as error:
+            logging.error("Error connecting to %s, bailing: %s", url, error)
             sys.exit(1)
         return response
 
@@ -70,11 +76,11 @@ class API:
         response = self.do_post(
             url=f"{self.baseurl}/api/v2/auth/login",
             data={
-                "username": self.username,
-                "password": self.password,
+                "username": self.config.qb_username,
+                "password": self.config.qb_password.get_secret_value,
             },
         )
-        print(f"Login: {response.text}", file=sys.stdout)
+        logging.info("Login: %s", response.text)
         cookies = response.cookies
         return cookies
 
@@ -83,7 +89,7 @@ class API:
         response = self.do_post(
             f"{self.baseurl}/api/v2/app/webapiVersion", cookies=self.cookies
         )
-        print(f"API Version: {response.text}", file=sys.stdout)
+        logging.debug("API Version: %s", response.text)
         return response.text
 
     def get_torrents(self) -> Dict[str, Any]:
