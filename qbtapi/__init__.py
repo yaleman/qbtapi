@@ -73,14 +73,18 @@ class API:
 
     def login(self) -> RequestsCookieJar:
         """does the login and gets a cookie"""
+        logging.info("Logging in to %s", self.baseurl)
         response = self.do_post(
             url=f"{self.baseurl}/api/v2/auth/login",
             data={
                 "username": self.config.qb_username,
-                "password": self.config.qb_password.get_secret_value,
+                "password": self.config.qb_password.get_secret_value(),
             },
         )
         logging.info("Login: %s", response.text)
+        if "fails" in response.text.lower():
+            logging.error("Login failed, check your credentials")
+            sys.exit(1)
         cookies = response.cookies
         return cookies
 

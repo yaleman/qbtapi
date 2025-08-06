@@ -23,6 +23,7 @@ qbtapi = "qbtapi.__main__:main"
 [dependency-groups]
 dev = [
     "mypy>=1.15.0",
+    "pylint-pydantic>=0.3.5",
     "pyright>=1.1.400",
     "pytest>=8.3.5",
     "ruff>=0.11.8",

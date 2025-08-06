@@ -25,13 +25,18 @@ CONFIG_FILENAMES = [
 @click.command()
 @click.option("--debug", is_flag=True, help="Enable debug logging")
 @click.option("--dry-run", is_flag=True, help="Do not send data to Splunk")
-def main(debug: bool, dry_run: bool) -> None:
+@click.option("--show-config", is_flag=True, help="Show the configuration and exit")
+def main(debug: bool = False, dry_run: bool = False, show_config: bool = False) -> None:
+    """queries the qBittorrent API and sends the results to Splunk HEC"""
     if debug:
         logging.basicConfig(level=logging.DEBUG)
     else:
         logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
     config = QBTAPIConfig.model_validate({})
+    if show_config:
+        click.echo(config.model_dump_json(indent=2))
+        return
     api = API(config=config)
 
     hec = http_event_collector(
@@ -60,8 +65,9 @@ def main(debug: bool, dry_run: bool) -> None:
             if not dry_run:
                 hec.flushBatch()
             queue_counter = 0
-    logger.info("Flushing queue...")
-    hec.flushBatch()
+    if not dry_run:
+        logger.info("Flushing queue...")
+        hec.flushBatch()
 
 
 if __name__ == "__main__":
