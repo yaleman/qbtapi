@@ -1,0 +1,18 @@
+[tools]
+python = "3.13"
+uv = "latest"
+
+[tasks.ty]
+run = "uv run ty check"
+
+[tasks.ruff]
+run = "uv run ruff check"
+
+[tasks.pytest]
+run = "uv run pytest"
+
+[tasks.check]
+depends = ["ty", "ruff", "pytest"]
+
+[tasks.docker]
+run = "docker build -t qbtapi ."

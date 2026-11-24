@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 Pulls torrent information from the qBittorrent API and pushes it to Splunk HEC
 
@@ -10,7 +8,9 @@ import logging
 import os
 
 import click
-from splunk_http_event_collector import http_event_collector  # type: ignore[import-untyped]
+from splunk_http_event_collector import (
+    http_event_collector,  # type: ignore[import-untyped]
+)
 
 from qbtapi import API, QBTAPIConfig
 
