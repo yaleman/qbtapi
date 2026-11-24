@@ -1,16 +1,15 @@
 """Qbittorrent API dumper"""
 
 import logging
-from socket import gethostname
-
 import sys
-from typing import Any, Dict, Optional
+from socket import gethostname
+from typing import Any
 
-from pydantic import Field, SecretStr
 import requests
-from requests.cookies import RequestsCookieJar
 import requests.exceptions
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from requests.cookies import RequestsCookieJar
 
 
 class QBTAPIConfig(BaseSettings):
@@ -46,6 +45,7 @@ class API:
 
         self.session = requests.Session()
         self.cookies = self.login()
+        self.logger = logging.getLogger(__name__)
 
     @property
     def baseurl(self) -> str:
@@ -56,24 +56,24 @@ class API:
     def do_post(
         self,
         url: str,
-        data: Optional[Dict[str, Any]] = None,
-        cookies: Optional[RequestsCookieJar] = None,
+        data: dict[str, Any] | None = None,
+        cookies: RequestsCookieJar | None = None,
     ) -> requests.Response:
         """general POST request thingie, kills the program if it fails."""
         try:
             response = self.session.post(url, data=data, cookies=cookies, timeout=30)
             response.raise_for_status()
         except requests.exceptions.ConnectionError as error:
-            logging.error("Connection error to %s, bailing: %s", url, error)
+            self.logger.error("Connection error to %s, bailing: %s", url, error)
             sys.exit(1)
-        except Exception as error:
-            logging.error("Error connecting to %s, bailing: %s", url, error)
+        except Exception as error:  # noqa: BLE001
+            self.logger.error("Error connecting to %s, bailing: %s", url, error)
             sys.exit(1)
         return response
 
     def login(self) -> RequestsCookieJar:
         """does the login and gets a cookie"""
-        logging.info("Logging in to %s", self.baseurl)
+        self.logger.info("Logging in to %s", self.baseurl)
         response = self.do_post(
             url=f"{self.baseurl}/api/v2/auth/login",
             data={
@@ -81,9 +81,9 @@ class API:
                 "password": self.config.qb_password.get_secret_value(),
             },
         )
-        logging.info("Login: %s", response.text)
+        self.logger.info("Login: %s", response.text)
         if "fails" in response.text.lower():
-            logging.error("Login failed, check your credentials")
+            self.logger.error("Login failed, check your credentials")
             sys.exit(1)
         cookies = response.cookies
         return cookies
@@ -93,13 +93,13 @@ class API:
         response = self.do_post(
             f"{self.baseurl}/api/v2/app/webapiVersion", cookies=self.cookies
         )
-        logging.debug("API Version: %s", response.text)
+        self.logger.debug("API Version: %s", response.text)
         return response.text
 
-    def get_torrents(self) -> Dict[str, Any]:
+    def get_torrents(self) -> dict[str, Any]:
         """pulls the torrent information"""
         response = self.do_post(
             f"{self.baseurl}/api/v2/torrents/info", cookies=self.cookies
         )
-        result: Dict[str, Any] = response.json()
+        result: dict[str, Any] = response.json()
         return result

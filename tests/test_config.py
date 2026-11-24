@@ -1,6 +1,7 @@
 """tests nothing, makes pytest happy"""
 
 import pytest
+
 from qbtapi import QBTAPIConfig
 
 
